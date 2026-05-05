@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
 
   const cookieStore = await cookies();
   const pendingCode = cookieStore.get(PENDING_CODE_COOKIE)?.value;
+  let isFirstSignup = false;
 
   if (pendingCode) {
     const { data: redeemed } = await supabase.rpc("redeem_invite_code", {
@@ -38,6 +39,7 @@ export async function GET(request: NextRequest) {
       url.searchParams.set("error", "redeem_failed");
       return NextResponse.redirect(url);
     }
+    isFirstSignup = true;
   } else {
     const {
       data: { user },
@@ -56,7 +58,8 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  url.pathname = next;
+  // Route fresh signups through onboarding once. Returning users skip it.
+  url.pathname = isFirstSignup ? "/onboarding" : next;
   url.search = "";
   return NextResponse.redirect(url);
 }
