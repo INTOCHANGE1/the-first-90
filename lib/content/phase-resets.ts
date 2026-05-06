@@ -1,6 +1,9 @@
 /**
- * End-of-phase reset prompts.
+ * End-of-phase reset / reflection prompts.
  * Source: _handover/THE_FIRST_90_New_Age_Man_Journal.docx
+ *
+ * One row per (user, phase) in `phase_resets`. Phase 3's reset is also
+ * surfaced via /journal/phase/3/reflection per the SPEC route table.
  */
 
 export const PHASE_1_RESET = {
@@ -45,53 +48,67 @@ export const PHASE_2_RESET = {
   preTitle: "END OF PHASE 2",
   title: "Rebuild reset",
   intro: [
-    "Awareness was Phase 1. Action is Phase 2 — and now Phase 2 is over.",
-    "Quiet work is the only work that actually changes a man.",
+    "Eight weeks. Two-thirds of the way.",
+    "This is the part of the journey where most men start to feel different. Cleaner. Stronger. More like themselves. It is also the part where most men get cocky and slip. Read this honestly.",
   ],
   prompts: [
     {
-      key: "what_stays" as const,
-      label: "What stays from Phase 2? What worked?",
+      key: "different_now" as const,
+      label: "What is different in me now compared to day one?",
     },
     {
-      key: "what_goes" as const,
-      label: "What goes? What was performance, not progress?",
+      key: "people_say" as const,
+      label: "What do the people closest to me say about me right now?",
     },
     {
-      key: "phase_3_focus" as const,
-      label: "What is new for Phase 3? What am I leading into next?",
+      key: "still_hiding" as const,
+      label: "Where am I still hiding?",
     },
     {
-      key: "becoming" as const,
-      label: "What is the man I am becoming building this final phase?",
+      key: "most_proud" as const,
+      label: "What am I most proud of from these eight weeks?",
+    },
+    {
+      key: "kept_standards" as const,
+      label: "Did I keep my standards? Look at the standards page.",
+    },
+    {
+      key: "phase_3_finish" as const,
+      label:
+        "What does Phase 3 — Self-Leadership need to look like to finish this strong?",
     },
   ],
-  closer: "Phase 3 is where you stop training and start leading.",
+  closer: "Phase 1 was honesty. Phase 2 was discipline. Phase 3 is leadership.",
 } as const;
 
 export const PHASE_3_RESET = {
   preTitle: "END OF PHASE 3",
   title: "Self-Leadership reflection",
   intro: [
-    "Twelve weeks. Three phases. The man at the end of this is not the man who opened the book.",
-    "Reflect honestly before you turn to the final review.",
+    "Twelve weeks. Ninety days. The first 90.",
+    "Look at where you are. Look at where you started.",
   ],
   prompts: [
     {
-      key: "phase_3_lessons" as const,
-      label: "What did Phase 3 teach me about leading myself?",
+      key: "biggest_difference" as const,
+      label:
+        "What is the biggest difference between the man who picked up this journal and the man holding it now?",
     },
     {
-      key: "showed_up" as const,
-      label: "Where did I show up as the man I said I was becoming?",
+      key: "led_strongest" as const,
+      label: "Where did I lead myself the strongest?",
     },
     {
-      key: "still_leaking" as const,
-      label: "Where am I still leaking, and what will I do about it?",
+      key: "still_building" as const,
+      label: "Where am I still building?",
     },
     {
-      key: "next_chapter" as const,
-      label: "What is the next chapter for this man?",
+      key: "most_proud" as const,
+      label: "What am I most proud of?",
+    },
+    {
+      key: "what_comes_next" as const,
+      label: "What is the work that comes next?",
     },
   ],
   closer: "The journal closes. The work doesn't.",
