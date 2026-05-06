@@ -2,22 +2,11 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils/cn";
+import { WHEEL_SEGMENTS, type WheelKey, type WheelRatings } from "@/lib/wheel";
 
-export const WHEEL_SEGMENTS = [
-  { key: "career", label: "Career" },
-  { key: "finance", label: "Finance" },
-  { key: "health", label: "Health" },
-  { key: "social", label: "Social" },
-  { key: "family", label: "Family" },
-  { key: "love", label: "Love" },
-  { key: "recreation", label: "Recreation" },
-  { key: "contribution", label: "Contribution" },
-  { key: "spirituality", label: "Spirituality" },
-  { key: "self_image", label: "Self-Image" },
-] as const;
-
-export type WheelKey = (typeof WHEEL_SEGMENTS)[number]["key"];
-export type WheelRatings = Partial<Record<WheelKey, number>>;
+// Re-export for downstream client modules that already import from here.
+export { WHEEL_SEGMENTS };
+export type { WheelKey, WheelRatings };
 
 type WheelOfLifeProps = {
   ratings: WheelRatings;

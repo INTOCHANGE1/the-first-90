@@ -85,19 +85,31 @@ export default async function JournalPage() {
         )}
 
         {!frontMatterIncomplete && (
-          <Card className="mb-8">
-            <MicroLabel>TODAY</MicroLabel>
-            <h2 className="text-2xl md:text-[28px] font-medium mt-2">
-              The journal proper goes here.
+          <Card variant="active" className="mb-8">
+            <MicroLabel className="text-bone/70">PHASE 1 · DEEP WORK</MicroLabel>
+            <h2 className="text-bone text-2xl md:text-[28px] font-medium mt-2">
+              See clearly first.
             </h2>
-            <p className="text-steel text-sm mt-2">
-              Daily morning + evening pages, weekly focus and Sunday review,
-              the habit grid — all coming next phase of the build.
+            <p className="text-bone/80 text-sm mt-2">
+              Twelve pages of self-discovery before the daily work begins.
+              Wheel of Life, the Gap, four pillars, integrity, the man you
+              have been. No spin. Truth on the page.
             </p>
+            <Link
+              href="/journal/phase/1"
+              className="inline-flex items-center gap-1.5 mt-5 text-[11px] font-medium uppercase tracking-[0.12em] text-bone hover:opacity-80"
+            >
+              Open Phase 1
+              <ChevronRight className="w-4 h-4" />
+            </Link>
           </Card>
         )}
 
         <ul className="flex flex-col">
+          <DashboardLink
+            href="/journal/phase/1"
+            label="Phase 1 — Self-discovery"
+          />
           <DashboardLink
             href="/journal/front-matter"
             label="Front matter"
