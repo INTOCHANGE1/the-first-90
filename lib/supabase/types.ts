@@ -562,6 +562,56 @@ export type Database = {
         }
         Relationships: []
       }
+      referrals: {
+        Row: {
+          context: string | null
+          created_at: string | null
+          email_error: string | null
+          email_sent_at: string | null
+          id: string
+          recipient_email: string | null
+          recipient_name: string
+          recipient_phone: string | null
+          referrer_id: string
+          referrer_name: string | null
+          why: string | null
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string | null
+          email_error?: string | null
+          email_sent_at?: string | null
+          id?: string
+          recipient_email?: string | null
+          recipient_name: string
+          recipient_phone?: string | null
+          referrer_id: string
+          referrer_name?: string | null
+          why?: string | null
+        }
+        Update: {
+          context?: string | null
+          created_at?: string | null
+          email_error?: string | null
+          email_sent_at?: string | null
+          id?: string
+          recipient_email?: string | null
+          recipient_name?: string
+          recipient_phone?: string | null
+          referrer_id?: string
+          referrer_name?: string | null
+          why?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_referrer_id_fkey"
+            columns: ["referrer_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reset_events: {
         Row: {
           created_at: string | null

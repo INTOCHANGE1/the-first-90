@@ -217,6 +217,16 @@ export default async function JournalPage() {
             label={`Phase ${phase}`}
           />
           <DashboardLink href="/journal/front-matter" label="Front matter" />
+          {(dayInfo.dayNumber ?? 0) >= 84 && (
+            <DashboardLink
+              href="/journal/back-matter"
+              label="Back matter — close the journal"
+            />
+          )}
+          <DashboardLink
+            href="/journal/back-matter/freeform"
+            label="Reflection pages"
+          />
           <DashboardLink href="/settings" label="Settings" />
         </ul>
 
