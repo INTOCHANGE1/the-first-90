@@ -26,11 +26,16 @@ export default async function LoginPage({
         Welcome back
       </h1>
       <LoginButton next={next} />
-      {error && (
+      {error === "expired" ? (
+        <p className="mt-6 text-sm text-steel max-w-sm text-center">
+          Your session timed out. Sign in again and we&rsquo;ll pick you up
+          where you left off.
+        </p>
+      ) : error ? (
         <p className="mt-6 text-sm text-blood">
           Something went wrong signing you in. Try again.
         </p>
-      )}
+      ) : null}
       <p className="mt-12 text-sm text-steel">
         New here? You&rsquo;ll need an invite code to{" "}
         <a href="/signup" className="text-ink underline underline-offset-4">

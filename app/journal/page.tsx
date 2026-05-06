@@ -118,6 +118,31 @@ export default async function JournalPage() {
   const morningDone = !!today?.morning_completed_at;
   const eveningDone = !!today?.evening_completed_at;
 
+  // ---- Recent days for "missed 3+" detection ------------------------------
+  // Count the streak of consecutive recent days (before today) with no
+  // completion timestamp. A streak >= 3 surfaces the reset page as the CTA.
+  let missedStreak = 0;
+  if (todayDay >= 2 && phase1Complete) {
+    const lookbackStart = Math.max(1, todayDay - 7);
+    const { data: recent } = await supabase
+      .from("daily_entries")
+      .select("day_number, morning_completed_at, evening_completed_at")
+      .eq("user_id", user.id)
+      .gte("day_number", lookbackStart)
+      .lt("day_number", todayDay);
+    const completedDays = new Set(
+      (recent ?? [])
+        .filter(
+          (r) => !!(r.morning_completed_at || r.evening_completed_at),
+        )
+        .map((r) => r.day_number),
+    );
+    for (let d = todayDay - 1; d >= lookbackStart; d--) {
+      if (completedDays.has(d)) break;
+      missedStreak++;
+    }
+  }
+
   const { data: thisWeek } = await supabase
     .from("weekly_entries")
     .select("focus_completed_at, review_completed_at")
@@ -150,6 +175,7 @@ export default async function JournalPage() {
     eveningDone,
     resetDone,
     finished: dayInfo.finished,
+    missedStreak,
   });
 
   const name = profile?.display_name?.split(" ")[0] ?? "friend";
@@ -293,7 +319,20 @@ function pickCta(s: {
   eveningDone: boolean;
   resetDone: (p: number) => boolean;
   finished: boolean;
+  missedStreak: number;
 }): CtaSpec | null {
+  // 3+ consecutive missed days takes priority over normal daily/weekly cadence
+  // so the user lands on the reset page first when they come back.
+  if (s.missedStreak >= 3) {
+    return {
+      preTitle: "RESET",
+      title: "If you fell off, read this.",
+      body: "You're still here. That matters more than anything you missed. Three prompts and you're back in.",
+      href: "/reset",
+      cta: "Open the reset page",
+    };
+  }
+
   if (s.finished) {
     return {
       preTitle: "DAY 90",
