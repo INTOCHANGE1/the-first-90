@@ -49,12 +49,7 @@ export function DailyRatingsRow({
   ];
 
   return (
-    <div
-      className={cn(
-        "grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-6",
-        className,
-      )}
-    >
+    <div className={cn("grid grid-cols-2 gap-x-4 gap-y-6", className)}>
       {keys.map((key) => (
         <RatingPills
           key={key}
