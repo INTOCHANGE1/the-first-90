@@ -187,6 +187,9 @@ function TimezoneStep({
   onNext: () => void;
   onBack: () => void;
 }) {
+  const allZones = useAllTimezones();
+  const isValid = isValidTimezone(timezone);
+
   return (
     <div className="flex flex-col gap-6">
       <MicroLabel>TIMEZONE</MicroLabel>
@@ -195,28 +198,104 @@ function TimezoneStep({
       </h2>
       <p className="text-base text-steel">
         We use this to know when &ldquo;today&rdquo; ticks over for your
-        morning and evening pages. We&rsquo;ve guessed from your browser; fix
-        it if it&rsquo;s wrong.
+        morning and evening pages. We&rsquo;ve guessed from your browser;
+        change it from the list below if it&rsquo;s wrong.
       </p>
-      <Input
+      <select
         value={timezone}
         onChange={(e) => onTimezone(e.target.value)}
-        placeholder="Australia/Perth"
-      />
-      <p className="text-xs text-ash">
-        Use an IANA timezone (e.g. Australia/Sydney, Europe/London,
-        America/Los_Angeles).
-      </p>
+        className="w-full bg-bone-warm border border-line px-4 py-3 text-base text-ink rounded transition-shadow focus:outline-none focus:ring-2 focus:ring-blood focus:ring-offset-2 focus:ring-offset-bone"
+      >
+        {!allZones.includes(timezone) && timezone && (
+          // Preserve any non-standard value (e.g. an old saved value) so the
+          // user can keep it visible while choosing a real one above.
+          <option value={timezone}>{timezone} (unknown)</option>
+        )}
+        {COMMON_TIMEZONES.length > 0 && (
+          <optgroup label="Common">
+            {COMMON_TIMEZONES.map((z) => (
+              <option key={z} value={z}>
+                {z}
+              </option>
+            ))}
+          </optgroup>
+        )}
+        <optgroup label="All timezones">
+          {allZones.map((z) => (
+            <option key={z} value={z}>
+              {z}
+            </option>
+          ))}
+        </optgroup>
+      </select>
+      {!isValid && (
+        <p className="text-sm text-blood">
+          Pick a real timezone from the list. The current value isn&rsquo;t
+          recognised.
+        </p>
+      )}
       <div className="flex justify-between gap-4 mt-4">
         <Button variant="secondary" onClick={onBack}>
           Back
         </Button>
-        <Button onClick={onNext} disabled={!timezone.trim()}>
+        <Button onClick={onNext} disabled={!isValid}>
           Continue
         </Button>
       </div>
     </div>
   );
+}
+
+/** Curated list shown above the full alphabetical IANA list. */
+const COMMON_TIMEZONES = [
+  "Australia/Sydney",
+  "Australia/Melbourne",
+  "Australia/Brisbane",
+  "Australia/Adelaide",
+  "Australia/Perth",
+  "Australia/Hobart",
+  "Australia/Darwin",
+  "Pacific/Auckland",
+  "Asia/Singapore",
+  "Asia/Tokyo",
+  "Europe/London",
+  "Europe/Berlin",
+  "America/New_York",
+  "America/Los_Angeles",
+  "UTC",
+];
+
+/** Hook returning the full IANA timezone list, sorted, on first render. */
+function useAllTimezones(): string[] {
+  return useMemoTimezones();
+}
+
+let cachedTimezones: string[] | null = null;
+function useMemoTimezones(): string[] {
+  if (cachedTimezones) return cachedTimezones;
+  try {
+    const fn = (
+      Intl as unknown as { supportedValuesOf?: (key: string) => string[] }
+    ).supportedValuesOf;
+    if (typeof fn === "function") {
+      cachedTimezones = fn("timeZone").slice().sort();
+      return cachedTimezones;
+    }
+  } catch {
+    // fall through
+  }
+  cachedTimezones = [...COMMON_TIMEZONES];
+  return cachedTimezones;
+}
+
+function isValidTimezone(tz: string): boolean {
+  if (!tz) return false;
+  try {
+    new Intl.DateTimeFormat("en-CA", { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function PickUpThePenStep({

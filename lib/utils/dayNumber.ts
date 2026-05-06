@@ -31,16 +31,28 @@ export type DayInfo = {
 /**
  * Format a Date as "YYYY-MM-DD" in the given IANA timezone.
  * en-CA Intl format reliably produces ISO-style YYYY-MM-DD output.
+ *
+ * Falls back to UTC if the supplied timezone string isn't a valid IANA
+ * identifier (e.g. "Queensland" instead of "Australia/Brisbane"). Without
+ * this guard, a bad value persisted on profiles.timezone would throw a
+ * RangeError on every dashboard load and lock the user out of /journal.
  */
 function isoDateInTZ(d: Date, timezone: string): string {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: timezone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(d);
-  // "YYYY-MM-DD" already
-  return parts;
+  try {
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: timezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(d);
+  } catch {
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: "UTC",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(d);
+  }
 }
 
 /** Calendar days between two YYYY-MM-DD strings, treating both as UTC midnights. */
