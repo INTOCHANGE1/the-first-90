@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SignOutButton } from "./SignOutButton";
+import { TimezoneEditor } from "./TimezoneEditor";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -24,15 +25,17 @@ export default async function SettingsPage() {
         Yours
       </h1>
 
-      <dl className="grid grid-cols-[8rem_1fr] gap-y-4 mb-12 text-sm">
+      <dl className="grid grid-cols-[8rem_1fr] gap-y-6 mb-12 text-sm items-start">
         <dt className="text-ash uppercase tracking-[0.08em] text-xs">Name</dt>
-        <dd className="text-ink">{profile?.display_name ?? "—"}</dd>
+        <dd className="text-ink">{profile?.display_name ?? "(not set)"}</dd>
         <dt className="text-ash uppercase tracking-[0.08em] text-xs">Email</dt>
         <dd className="text-ink">{profile?.email ?? user.email}</dd>
         <dt className="text-ash uppercase tracking-[0.08em] text-xs">
           Timezone
         </dt>
-        <dd className="text-ink">{profile?.timezone ?? "UTC"}</dd>
+        <dd className="text-ink">
+          <TimezoneEditor initial={profile?.timezone ?? "UTC"} />
+        </dd>
       </dl>
 
       <SignOutButton />

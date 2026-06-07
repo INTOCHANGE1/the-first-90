@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { MicroLabel } from "@/components/ui/SectionHeading";
 import { ProgressBar } from "@/components/ui/ProgressBar";
+import { TimezonePicker } from "@/components/forms/TimezonePicker";
 import { LETTER } from "@/lib/content/front-matter";
+import { guessTimezone, isValidTimezone } from "@/lib/utils/timezone";
 import { saveOnboardingProfile } from "./actions";
 
 type InitialState = {
@@ -187,7 +189,6 @@ function TimezoneStep({
   onNext: () => void;
   onBack: () => void;
 }) {
-  const allZones = useAllTimezones();
   const isValid = isValidTimezone(timezone);
 
   return (
@@ -201,33 +202,7 @@ function TimezoneStep({
         morning and evening pages. We&rsquo;ve guessed from your browser;
         change it from the list below if it&rsquo;s wrong.
       </p>
-      <select
-        value={timezone}
-        onChange={(e) => onTimezone(e.target.value)}
-        className="w-full bg-bone-warm border border-line px-4 py-3 text-base text-ink rounded transition-shadow focus:outline-none focus:ring-2 focus:ring-blood focus:ring-offset-2 focus:ring-offset-bone"
-      >
-        {!allZones.includes(timezone) && timezone && (
-          // Preserve any non-standard value (e.g. an old saved value) so the
-          // user can keep it visible while choosing a real one above.
-          <option value={timezone}>{timezone} (unknown)</option>
-        )}
-        {COMMON_TIMEZONES.length > 0 && (
-          <optgroup label="Common">
-            {COMMON_TIMEZONES.map((z) => (
-              <option key={z} value={z}>
-                {z}
-              </option>
-            ))}
-          </optgroup>
-        )}
-        <optgroup label="All timezones">
-          {allZones.map((z) => (
-            <option key={z} value={z}>
-              {z}
-            </option>
-          ))}
-        </optgroup>
-      </select>
+      <TimezonePicker value={timezone} onChange={onTimezone} />
       {!isValid && (
         <p className="text-sm text-blood">
           Pick a real timezone from the list. The current value isn&rsquo;t
@@ -244,58 +219,6 @@ function TimezoneStep({
       </div>
     </div>
   );
-}
-
-/** Curated list shown above the full alphabetical IANA list. */
-const COMMON_TIMEZONES = [
-  "Australia/Sydney",
-  "Australia/Melbourne",
-  "Australia/Brisbane",
-  "Australia/Adelaide",
-  "Australia/Perth",
-  "Australia/Hobart",
-  "Australia/Darwin",
-  "Pacific/Auckland",
-  "Asia/Singapore",
-  "Asia/Tokyo",
-  "Europe/London",
-  "Europe/Berlin",
-  "America/New_York",
-  "America/Los_Angeles",
-  "UTC",
-];
-
-/** Hook returning the full IANA timezone list, sorted, on first render. */
-function useAllTimezones(): string[] {
-  return useMemoTimezones();
-}
-
-let cachedTimezones: string[] | null = null;
-function useMemoTimezones(): string[] {
-  if (cachedTimezones) return cachedTimezones;
-  try {
-    const fn = (
-      Intl as unknown as { supportedValuesOf?: (key: string) => string[] }
-    ).supportedValuesOf;
-    if (typeof fn === "function") {
-      cachedTimezones = fn("timeZone").slice().sort();
-      return cachedTimezones;
-    }
-  } catch {
-    // fall through
-  }
-  cachedTimezones = [...COMMON_TIMEZONES];
-  return cachedTimezones;
-}
-
-function isValidTimezone(tz: string): boolean {
-  if (!tz) return false;
-  try {
-    new Intl.DateTimeFormat("en-CA", { timeZone: tz });
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 function PickUpThePenStep({
@@ -337,13 +260,4 @@ function PickUpThePenStep({
       </div>
     </div>
   );
-}
-
-function guessTimezone(): string {
-  if (typeof Intl === "undefined") return "UTC";
-  try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
-  } catch {
-    return "UTC";
-  }
 }

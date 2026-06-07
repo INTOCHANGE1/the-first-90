@@ -2,16 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-
-function isValidTimezone(tz: string): boolean {
-  if (!tz) return false;
-  try {
-    new Intl.DateTimeFormat("en-CA", { timeZone: tz });
-    return true;
-  } catch {
-    return false;
-  }
-}
+import { isValidTimezone } from "@/lib/utils/timezone";
 
 export async function saveOnboardingProfile(formData: FormData): Promise<void> {
   const displayName = String(formData.get("display_name") ?? "").trim();
